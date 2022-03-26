@@ -7,10 +7,4 @@ SRC_URI:append:nezha = " \
     file://0002-lib-utils-timer-Add-a-separate-compatible-for-the-D1.patch \
 "
 
-EXTRA_OEMAKE:nezha = "PLATFORM=${RISCV_SBI_PLAT} I=${D} FW_PIC=y CLANG_TARGET= "
-
-do_install:prepend:nezha () {
-    autotools_do_install
-}
-
 INSANE_SKIP:${PN}:nezha += "ldflags"
