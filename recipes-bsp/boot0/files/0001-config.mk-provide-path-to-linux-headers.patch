@@ -1,39 +1,61 @@
-From ab1b69ebe46cb0fa8ce9cc491c68dfd2aee40cfe Mon Sep 17 00:00:00 2001
+From cbc57a2731981ba53ce17571158c43e4d5ea5b92 Mon Sep 17 00:00:00 2001
 From: Cezary Sobczak <cezary.sobczak@3mdeb.com>
 Date: Tue, 12 Oct 2021 23:50:07 +0200
-Subject: [PATCH] config.mk: provide path to linux headers
+Subject: [PATCH 1/2] config.mk: provide path to linux headers
 
 Signed-off-by: Cezary Sobczak <cezary.sobczak@3mdeb.com>
 ---
- mk/config.mk | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ mk/config.mk | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
 diff --git a/mk/config.mk b/mk/config.mk
-index 9561351cf057..fbd004f6b52c 100644
+index 98abfd1fe2f5..6e7dccf50cfd 100644
 --- a/mk/config.mk
 +++ b/mk/config.mk
-@@ -28,7 +28,9 @@ SPLINCLUDE    := \
+@@ -6,6 +6,7 @@ ifneq ($(SKIP_AUTO_CONF),yes)
+ sinclude $(TOPDIR)/autoconf.mk
+ endif
+ 
++ifdef CROSS_COMPILE
+ AS		= $(CROSS_COMPILE)as
+ LD		= $(CROSS_COMPILE)ld
+ CC		= $(CROSS_COMPILE)gcc
+@@ -16,19 +17,23 @@ LDR		= $(CROSS_COMPILE)ldr
+ STRIP		= $(CROSS_COMPILE)strip
+ OBJCOPY		= $(CROSS_COMPILE)objcopy
+ OBJDUMP		= $(CROSS_COMPILE)objdump
++endif
+ 
+ ##########################################################
+ ifeq (x$(CPU), xriscv64)
+ MARCH := rv64gc
+ MABI := lp64
+ 
+-COMPILEINC :=  -isystem $(shell dirname `$(CC)  -print-libgcc-file-name`)/include
++GCCINCDIR = $(shell find $(COMPILE_CC_INCDIR) -name stdbool.h)
++
++COMPILEINC :=  -isystem $(shell dirname $(GCCINCDIR))
+ SPLINCLUDE    := \
+ 		-I$(SRCTREE)/include \
  		-I$(SRCTREE)/include/arch/riscv/ \
  		-I$(SRCTREE)/include/configs/ \
  		-I$(SRCTREE)/include/arch/$(PLATFORM)/ \
 -		-I$(SRCTREE)/include/openssl/
 +		-I$(SRCTREE)/include/openssl/ \
-+		-I$(SRCTREE)/include/linux/ \
-+		-I$(STAGING_INCDIR)
-
++		-I$(SRCTREE)/include/linux/
+ 
   COMM_FLAGS := -nostdinc  $(COMPILEINC) \
  	-g  -Os   -fno-common \
-@@ -60,7 +62,9 @@ SPLINCLUDE    := \
+@@ -60,7 +65,8 @@ SPLINCLUDE    := \
  		-I$(SRCTREE)/include/arch/arm/ \
  		-I$(SRCTREE)/include/configs/ \
  		-I$(SRCTREE)/include/arch/$(PLATFORM)/ \
 -		-I$(SRCTREE)/include/openssl/
 +		-I$(SRCTREE)/include/openssl/ \
-+		-I$(SRCTREE)/include/linux/ \
-+		-I$(STAGING_INCDIR)
-
++		-I$(SRCTREE)/include/linux/
+ 
   COMM_FLAGS := -nostdinc  $(COMPILEINC) \
  	-g  -Os   -fno-common -mfpu=neon  $(FLOAT_FLAGS) \
---
+-- 
 2.25.1
 
