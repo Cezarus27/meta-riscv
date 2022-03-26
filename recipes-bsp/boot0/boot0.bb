@@ -9,23 +9,18 @@ SRC_URI = " \
 	file://0002-riscv-fix-build-with-binutils-2.38.patch \
 "
 
-PV = "1.0-dev"
+PV = "1.0+git${SRCPV}"
 SRCREV = "0ad88bfdb723b1ac74cca96122918f885a4781ac"
 
 S = "${WORKDIR}/git"
 
-CFLAGS += " --sysroot=${RECIPE_SYSROOT}"
+# This path is used in Makefile to find the proper 'include' folder containing
+# headers eg. 'stdbool.h' provided with compiler.
+COMPILEINC = "${RECIPE_SYSROOT_NATIVE}${libdir}/${TARGET_SYS}/gcc/"
 
-EXTRA_OEMAKE = "CROSS_COMPILE=${TARGET_PREFIX} p=sun20iw1p1 mmc"
-EXTRA_OEMAKE += "STAGING_INCDIR=${STAGING_INCDIR_NATIVE}"
-
-GCC_INCLUDE = "${RECIPE_SYSROOT_NATIVE}${libdir}/${TARGET_SYS}/gcc/${TARGET_SYS}/*/include"
+EXTRA_OEMAKE = "p=sun20iw1p1 mmc COMPILE_CC_INCDIR=${COMPILEINC}"
 
 inherit deploy
-
-do_configure () {
-	cp -r ${GCC_INCLUDE}/* ${STAGING_INCDIR_NATIVE}
-}
 
 do_compile () {
 	unset LDFLAGS
