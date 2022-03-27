@@ -21,6 +21,9 @@ SRC_URI = " \
 LINUX_VERSION ?= "5.16.0"
 LINUX_VERSION_EXTENSION:append = "-nezha"
 
+KERNEL_FEATURES += "features/cgroups/cgroups.cfg"
+KERNEL_FEATURES += "ktypes/standard/standard.cfg"
+
 KBUILD_DEFCONFIG = "nezha_defconfig"
 
 COMPATIBLE_MACHINE = "(nezha-allwinner-d1)"
